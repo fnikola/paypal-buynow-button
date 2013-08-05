@@ -1,0 +1,56 @@
+<?php
+global $user;
+if ($user->uid > 0) {
+
+$players = db_query("SELECT count(nid) FROM {node} where type = 'players' and uid = ".$user->uid)->fetchField();
+if ($players > 0) {
+?>
+
+<!--
+<p>Please click on the appropriate button below to process your online payment.</p>
+<p>Thank you!</p>
+<p>&nbsp;</p>
+--><!--
+<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+-->
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+  <table>
+		<tbody>
+			<tr>
+				<td>
+					<input name="on0" type="hidden" value="Please click on the &quot;Pay Now&quot; button below to process payment" />Please click on the &quot;Pay Now&quot; button below to process payment</td>
+			</tr>
+			<tr>
+				<td>
+					<select name="os0"><option value="Fall Ball Registration - 1 Family">Fall Ball Registration - 1 Family $50.00 USD</option></select></td>
+			</tr>
+		</tbody>
+	</table>
+	<input name="currency_code" type="hidden" value="USD" /> <input alt="PayPal - The safer, easier way to pay online!" border="0" name="submit" src="https://www.paypalobjects.com/en_US/i/btn/btn_paynowCC_LG.gif" type="image" /> <img alt="" border="0" height="1" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" /><input name="image_url" type="hidden" value="http://www.northwalllittleleague.com/sites/default/files/nwll-banner-2-50.png" /> <input name="cmd" type="hidden" value="_s-xclick" /> <input name="hosted_button_id" type="hidden" value="8ZREWHHDECQHQ " /><!-- 6RNYM9AKEEEP4 -->
+<?php
+global $user;
+$profile = user_load($user->uid);
+print '<input name="first_name" type="hidden" value="'.$profile->field_first_name['und'][0]['value'].'" />';
+print '<input name="last_name" type="hidden" value="'.$profile->field_last_name['und'][0]['value'].'" />';
+print '<input name="address1" type="hidden" value="'.$profile->field_address_1['und'][0]['value'].'" />';
+if (is_object($profile->field_address_2)) {
+  print '<input name="address2" type="hidden" value="'.$profile->field_address_2['und'][0]['value'].'" />';
+}
+print '<input name="city" type="hidden" value="'.$profile->field_address_city['und'][0]['value'].'" />';
+print '<input name="state" type="hidden" value="'.$profile->field_address_state['und'][0]['value'].'" />';
+print '<input name="zip" type="hidden" value="'.$profile->field_address_zip['und'][0]['value'].'" />';
+print '<input name="email" type="hidden" value="'.$user->mail.'" />';
+print '<input name="custom" type="hidden" value="'.$user->uid.'" />';
+print '<input name="invoice" type="hidden" value="2012FB-'.$user->uid.'" />';
+?>
+</form>
+<?php
+}
+else {
+  print 'You first need to <a href="/register/player">add a player</a> before you can make the payment.';
+}
+
+} else {
+  print 'Please <a href="/user/login">login</a> before you can make the payment.';
+}
+?>
